@@ -1,24 +1,23 @@
 <html>
     <head>
-        <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
-        <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+        <link href="css/bootstrap/css/bootstrap.css" rel="stylesheet" />
+        <link href="css/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
         <link href="css/notes.css" rel="stylesheet" />
     </head>
     <body>
 
         <div class="container editor">
             <div id="BalloonNotesContainer" class="editorArea">
-                <span class="number-words" id="number_words"><b>0</b> words</span>
                 <textarea id="BalloonNotes" class="BalloonNotes">Type your notes here…</textarea>
+                <span class="number-words" id="number_words"><b>0</b> words</span>
+                <a href="#" class="btn btn-large btn-primary float-right">Save</a>
             </div>
         </div>
 
         <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="underscore/underscore-min.js"></script>
-
         <script type="text/javascript" src="backbone/backbone-min.js"></script>
         <script type="text/javascript" src="backbone-localstorage/backbone.localStorage-min.js"></script>
-
         <script type="text/javascript" src="js/notes.js"></script>
     </body>
 </html>
