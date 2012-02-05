@@ -9,7 +9,7 @@ $(function() {
         /* Load some defaults */
         defaults: function() {
             return {
-                'notes': '',
+                'notes': 'Type your notes here…',
                 'words': 0,
             };
         },
@@ -32,20 +32,26 @@ $(function() {
         events: {
             "keyup":                  "editAndSave",
             "focus #BalloonNotes":    "hasFocus",
+            "click #notes-clear":     "reset",
         },
 
         /**
         *   Initialisation function. Fetch notes and display them properly
         **/
         initialize: function() {
-
             /* Fetch notes from localStorage */
             Notes.fetch();
 
-            /* Display notes if some are persisted */
-            if (Notes.get("notes") != "") {
-                this.$("#BalloonNotes").html(Notes.get("notes"));
-            }
+            /* Then, render them */
+            this.render();
+        },
+
+        /**
+        *   Render notes and counter
+        **/
+        render: function() {
+            /* Display notes */
+            this.$("#BalloonNotes").html(Notes.get("notes"));
 
             /* Scroll at the end of textarea */
             this.$("#BalloonNotes").scrollTop(this.$('#BalloonNotes')[0].scrollHeight);
@@ -65,7 +71,7 @@ $(function() {
         *   Remove textarea placeholder. Called each time we have focus on textarea
         **/
         hasFocus: function() {
-            if (Notes.get("notes").length == 0) {
+            if (Notes.get("words") == 0) {
                 this.$("#BalloonNotes").val("");
             }
         },
@@ -84,7 +90,16 @@ $(function() {
         **/
         displayNumberWords: function(number_words) {
             this.$("#number_words b").html(number_words);
-        }
+        },
+
+        /**
+        *   Delete LocalStorage and create/render new one
+        **/
+        reset: function() {
+            Notes.destroy();
+            Notes = new NotesModel({id: 1});
+            this.render();
+        },
     });
 
     window.App = new AppView;

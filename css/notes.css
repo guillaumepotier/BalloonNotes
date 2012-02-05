@@ -38,3 +38,7 @@ textarea#BalloonNotes {
 .float-right {
     float: right;
 }
+
+.btn {
+    margin-right: 0.5em;
+}
