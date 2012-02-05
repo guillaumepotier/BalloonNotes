@@ -1,0 +1,9 @@
+[submodule "backbone"]
+	path = backbone
+	url = https://github.com/documentcloud/backbone.git
+[submodule "backbone-localstorage"]
+	path = backbone-localstorage
+	url = https://github.com/jeromegn/Backbone.localStorage.git
+[submodule "underscore"]
+	path = underscore
+	url = https://github.com/documentcloud/underscore.git
