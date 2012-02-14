@@ -9,10 +9,10 @@ $(function() {
         /* Load some defaults */
         defaults: function() {
             return {
-                'notes': 'Type your notes here…',
-                'words': 0,
+                'notes': 'Type your notes here...',
+                'words': 0
             };
-        },
+        }
     });
 
     /* We must set an id to store locally a single model. It is different than collections */
@@ -32,7 +32,7 @@ $(function() {
         events: {
             "keyup":                  "editAndSave",
             "focus #BalloonNotes":    "hasFocus",
-            "click #notes-clear":     "reset",
+            "click #notes-clear":     "reset"
         },
 
         /**
@@ -71,7 +71,7 @@ $(function() {
         *   Remove textarea placeholder. Called each time we have focus on textarea
         **/
         hasFocus: function() {
-            if (Notes.get("words") == 0) {
+            if (Notes.get("words") === 0) {
                 this.$("#BalloonNotes").val("");
             }
         },
@@ -80,7 +80,14 @@ $(function() {
         *   Count number of words in notes
         **/
         countWordsAndDisplay: function(notes) {
-            var number_words = notes == '' ? 0 : notes.replace(/\s/g,' ').split(" ").length;
+            var number_words = 0;
+            var replaced = notes.replace(/\s/g,' ').split(' ');
+            for (var i = 0; i < replaced.length; i++) {
+                if (replaced[i].length > 0) {
+                  number_words++;
+                }
+            }
+
             this.displayNumberWords(number_words);
             Notes.save({words: number_words});
         },
@@ -99,8 +106,8 @@ $(function() {
             Notes.destroy();
             Notes = new NotesModel({id: 1});
             this.render();
-        },
+        }
     });
 
-    window.App = new AppView;
+    window.App = new AppView();
 });
