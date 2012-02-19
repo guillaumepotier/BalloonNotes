@@ -16,7 +16,7 @@ a {
 
 .editorArea {
     width: 80%;
-    height: 500px;
+    height: 80%;
     margin: 2em auto;
 }
 
@@ -33,6 +33,7 @@ textarea#BalloonNotes {
 .number-words {
     font-size: 1.5em;
     padding-bottom: 0.4em;
+    margin-left: 0.5em;
 }
 
 .float-right {
