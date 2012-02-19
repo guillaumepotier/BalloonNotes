@@ -6,6 +6,9 @@ $(function() {
         /* We use localStorage when we do a save() or a fetch() */
         localStorage: new Store("BalloonNotes"),
 
+        initialize : function() {
+            this.url = "server/model.php"+"?id="+this.id;
+        },
         /* Load some defaults */
         defaults: function() {
             return {
@@ -40,12 +43,12 @@ $(function() {
         **/
         initialize: function() {
             /* Fetch notes from localStorage */
+            var autoSave = setInterval(this.autoSave, 20000);
             Notes.fetch();
 
             /* Then, render them */
             this.render();
         },
-
         /**
         *   Render notes and counter
         **/
@@ -66,7 +69,9 @@ $(function() {
             this.countWordsAndDisplay(notes);
             Notes.save({notes: notes});
         },
-
+        autoSave: function() {
+            Notes.save({},{'location' : 'remote'});
+        },
         /**
         *   Remove textarea placeholder. Called each time we have focus on textarea
         **/
@@ -98,7 +103,6 @@ $(function() {
         displayNumberWords: function(number_words) {
             this.$("#number_words b").html(number_words);
         },
-
         /**
         *   Delete LocalStorage and create/render new one
         **/
