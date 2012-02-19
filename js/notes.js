@@ -77,13 +77,13 @@ $(function() {
         **/
         autoSave: function() {
             var self = this;
-            this.$("#notes-save").text('Saving..');
+            this.saveButton('saving');
+
             if (Notes.get("words") !== 0) {
                 Notes.save({},{
-                    'location' : 'remote', 
-                    success: function(){
-                        self.$("#notes-save").addClass("disabled");
-                        self.$("#notes-save").text('Saved!');
+                    'location' : 'remote',
+                    success: function() {
+                        self.saveButton('saved')
                     }
                 });
             }
@@ -97,13 +97,12 @@ $(function() {
         initFetch: function() {
             var self = this;
             Notes.fetch({
-                'location': 'remote', 
-                success: function(){
+                'location': 'remote',
+                success: function() {
                     self.render();
-                    self.$("#notes-save").addClass("disabled");
-                    self.$("#notes-save").text('Saved!');
+                    self.saveButton('saved');
                 },
-                error: function(){
+                error: function() {
                     self.fallbackLocalFetch();
                 }
             });
@@ -115,8 +114,8 @@ $(function() {
         fallbackLocalFetch: function() {
             var self = this;
             Notes.fetch({
-                'location': 'local', 
-                success: function(){
+                'location': 'local',
+                success: function() {
                     self.render();
                 }
             });
@@ -144,10 +143,26 @@ $(function() {
             }
 
             this.displayNumberWords(number_words);
-            this.$("#notes-save").removeClass("disabled");
-            this.$("#notes-save").text('Saved');
+            this.saveButton('toBeSaved');
 
             return number_words;
+        },
+
+        /**
+        *   Take care of Save button UI
+        **/
+        saveButton: function(state) {
+            var button = this.$("#notes-save");
+            if (state == 'saved') {
+                button.addClass("disabled");
+                button.text('Saved');
+            } else if ( state == 'saving') {
+                button.addClass("disabled");
+                button.text('Saving..');
+            } else {
+                button.removeClass("disabled");
+                button.text('Save');
+            }
         },
 
         /**
