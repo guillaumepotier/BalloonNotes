@@ -33,6 +33,9 @@ $(function() {
         /* Our main element */
         el: $("#BalloonNotesContainer"),
 
+        /* Autosave frequency in seconds */
+        autosaveInterval: 20,
+
         events: {
             "keyup":                  "editAndSave",
             "focus #BalloonNotes":    "hasFocus",
@@ -44,8 +47,12 @@ $(function() {
         *   Initialisation function. Fetch notes and display them properly
         **/
         initialize: function() {
-            /* Fetch notes from localStorage */
-            setInterval(this.autoSave, 20000);
+            var self = this;
+
+            /* Fetch notes from localStorage, must give context */
+            setInterval((function(self) {
+                return function() {self.autoSave();}})(this),
+            this.autosaveInterval*1000);
 
             /* Check for local and remote storage then render */
             this.initFetch();
@@ -75,7 +82,7 @@ $(function() {
         /**
         *   Save notes whith distant server
         **/
-        autoSave: function() {
+        autoSave: function(self) {
             var self = this;
             this.saveButton('saving');
 
