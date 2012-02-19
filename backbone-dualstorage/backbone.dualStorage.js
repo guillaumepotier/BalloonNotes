@@ -6,9 +6,8 @@ Backbone.localeSync = Backbone.sync;
 
 Backbone.sync = function(method, model, options) {
     if (options.location == 'remote'){
-        Backbone.ajaxSync(method, model, options);
+        return Backbone.ajaxSync(method, model, options);
     } else {
-        Backbone.localeSync(method, model, options);
+        return Backbone.localeSync(method, model, options);
     }
 };
-

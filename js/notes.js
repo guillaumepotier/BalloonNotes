@@ -9,6 +9,7 @@ $(function() {
         initialize : function() {
             this.url = "server/model.php"+"?id="+this.id;
         },
+
         /* Load some defaults */
         defaults: function() {
             return {
@@ -35,7 +36,8 @@ $(function() {
         events: {
             "keyup":                  "editAndSave",
             "focus #BalloonNotes":    "hasFocus",
-            "click #notes-clear":     "reset"
+            "click #notes-clear":     "reset",
+            "click #notes-save":      "autoSave",
         },
 
         /**
@@ -43,12 +45,12 @@ $(function() {
         **/
         initialize: function() {
             /* Fetch notes from localStorage */
-            var autoSave = setInterval(this.autoSave, 20000);
-            Notes.fetch();
+            setInterval(this.autoSave, 20000);
 
-            /* Then, render them */
-            this.render();
+            /* Check for local and remote storage then render */
+            this.initFetch();
         },
+
         /**
         *   Render notes and counter
         **/
@@ -66,12 +68,60 @@ $(function() {
         **/
         editAndSave: function(e) {
             var notes = this.$("#BalloonNotes").val();
-            this.countWordsAndDisplay(notes);
-            Notes.save({notes: notes});
+            var words = this.countWordsAndDisplay(notes);
+            Notes.save({notes: notes, words: words});
         },
+
+        /**
+        *   Save notes whith distant server
+        **/
         autoSave: function() {
-            Notes.save({},{'location' : 'remote'});
+            var self = this;
+            this.$("#notes-save").text('Saving..');
+            if (Notes.get("words") !== 0) {
+                Notes.save({},{
+                    'location' : 'remote', 
+                    success: function(){
+                        self.$("#notes-save").addClass("disabled");
+                        self.$("#notes-save").text('Saved!');
+                    }
+                });
+            }
+
+            return false;
         },
+
+        /**
+        *   On page loading, compare what we have in localStorage and in distant storage, then choose
+        **/
+        initFetch: function() {
+            var self = this;
+            Notes.fetch({
+                'location': 'remote', 
+                success: function(){
+                    self.render();
+                    self.$("#notes-save").addClass("disabled");
+                    self.$("#notes-save").text('Saved!');
+                },
+                error: function(){
+                    self.fallbackLocalFetch();
+                }
+            });
+        },
+
+        /**
+        *   If could not resolve host on remote server, then fetch localStorage
+        **/
+        fallbackLocalFetch: function() {
+            var self = this;
+            Notes.fetch({
+                'location': 'local', 
+                success: function(){
+                    self.render();
+                }
+            });
+        },
+
         /**
         *   Remove textarea placeholder. Called each time we have focus on textarea
         **/
@@ -94,7 +144,10 @@ $(function() {
             }
 
             this.displayNumberWords(number_words);
-            Notes.save({words: number_words});
+            this.$("#notes-save").removeClass("disabled");
+            this.$("#notes-save").text('Saved');
+
+            return number_words;
         },
 
         /**
@@ -103,10 +156,13 @@ $(function() {
         displayNumberWords: function(number_words) {
             this.$("#number_words b").html(number_words);
         },
+
         /**
         *   Delete LocalStorage and create/render new one
         **/
         reset: function() {
+            /* We delete both storages and instanciate new empty Model */
+            Notes.destroy({'location': 'remote'});
             Notes.destroy();
             Notes = new NotesModel({id: 1});
             this.render();

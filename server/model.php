@@ -1,6 +1,7 @@
 <?php
 
-switch($_SERVER['REQUEST_METHOD']){
+switch($_SERVER['REQUEST_METHOD'])
+{
     case 'POST':
         save();
     break;
@@ -13,12 +14,16 @@ switch($_SERVER['REQUEST_METHOD']){
     case 'DELETE':
         destroy();
     break;
+    default: 
+        return false; 
+    break;
 }
 
 /**
  * Save model.
 **/
-function save() {
+function save() 
+{
     $values = json_decode(file_get_contents('php://input'), true);
     $handle = fopen($values[id].".json","w");
     fwrite($handle, json_encode($values));
@@ -28,7 +33,8 @@ function save() {
 /**
 * Fetch model.
 **/
-function fetch() {
+function fetch() 
+{
     $jsonFile = $_GET['id'].".json";
     $fh = fopen($jsonFile, 'r');
     $jsonData = fread($fh, filesize($jsonFile));
@@ -39,9 +45,8 @@ function fetch() {
 /**
 * Destroy model.
 **/
-function destroy() {
+function destroy() 
+{
     $jsonFile = $_GET['id'].".json";
     unlink($jsonFile);
 }
-?>
-
