@@ -49,9 +49,12 @@ $(function() {
         initialize: function() {
             var self = this;
 
-            /* Fetch notes from localStorage, must give context */
+            /* Fetch notes from localStorage, must give context& */
             setInterval((function(self) {
-                return function() {self.autoSave();}})(this),
+                return function() {
+                    self.saveButton('saving');
+                    self.autoSave();
+                }})(this),
             this.autosaveInterval*1000);
 
             /* Check for local and remote storage then render */
@@ -82,9 +85,8 @@ $(function() {
         /**
         *   Save notes whith distant server
         **/
-        autoSave: function(self) {
+        autoSave: _.debounce(function(self) {
             var self = this;
-            this.saveButton('saving');
 
             if (Notes.get("words") !== 0) {
                 Notes.save({},{
@@ -96,7 +98,7 @@ $(function() {
             }
 
             return false;
-        },
+        }, 800),
 
         /**
         *   On page loading, compare what we have in localStorage and in distant storage, then choose
