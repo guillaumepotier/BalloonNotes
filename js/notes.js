@@ -18,6 +18,12 @@ $(function() {
             };
         }
     });
+    
+    /* Here is our history collection */
+    window.NotesHistoryCollection = Backbone.Collection.extend({
+        model : NotesModel,
+        url : 'server/history.php'
+    });
 
     /* We must set an id to store locally a single model. It is different than collections */
     var Notes = new NotesModel({id: 1});
@@ -26,12 +32,13 @@ $(function() {
     window.NotesView = Backbone.View.extend({
         // empty at the moment
     });
-
+    
     /* And then our "Controller" */
     window.AppView = Backbone.View.extend({
 
         /* Our main element */
         el: $("#BalloonNotesContainer"),
+        list: $('#history-list'),
 
         /* Autosave frequency in seconds */
         autosaveInterval: 20,
@@ -56,9 +63,14 @@ $(function() {
                     self.autoSave();
                 }})(this),
             this.autosaveInterval*1000);
+            
 
             /* Check for local and remote storage then render */
             this.initFetch();
+            /** init underscore template for history list */
+            this.template = _.template($('#history-template').html());
+            /** Instanciate history collection */
+            this.history = new NotesHistoryCollection();
         },
 
         /**
@@ -71,6 +83,15 @@ $(function() {
             /* Scroll at the end of textarea */
             this.$("#BalloonNotes").scrollTop(this.$('#BalloonNotes')[0].scrollHeight);
             this.displayNumberWords(Notes.get("words"));
+        },
+        
+        /**
+         * Render notes list
+         */
+        renderList : function() {
+            var renderedContent = this.template({history : this.history.toJSON()});
+            $(this.list).html(renderedContent);
+            return this;
         },
 
         /**
@@ -92,6 +113,10 @@ $(function() {
                 Notes.save({},{
                     'location' : 'remote',
                     success: function() {
+                        //fetch and render history list
+                        self.history.fetch({location: 'remote', success: function() {
+                            self.renderList();
+                        }});
                         self.saveButton('saved')
                     }
                 });
@@ -109,6 +134,10 @@ $(function() {
                 'location': 'remote',
                 success: function() {
                     self.render();
+                    //fetch and render history list
+                    self.history.fetch({location: 'remote', success: function() {
+                        self.renderList();
+                    }});
                     self.saveButton('saved');
                 },
                 error: function() {
@@ -192,6 +221,33 @@ $(function() {
             this.render();
         }
     });
+    
+    
+    /**
+     * Router
+     */
+    window.NotesRouter = Backbone.Router.extend({
+        initialize : function() {
+            window.App = new AppView();
+        },
+        routes : {
+            'load/:id' : 'load'
+        },
+        
+        /**
+         * Load a note history on click
+         * @param integer id
+         */
+        load : function(id) {
+            console.log(id);
+            return false;
+        }
+    });
+  
+});
 
-    window.App = new AppView();
+$(function() {
+    /** init router */
+    var router = new NotesRouter();
+    Backbone.history.start();
 });

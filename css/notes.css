@@ -24,7 +24,7 @@ textarea#BalloonNotes {
     display: block;
     text-align: justify;
     width: 100%;
-    height: 100%;
+    height: 50%;
     line-height: 1em;
     font-size: 3em;
     padding: 0.4em 0.5em;
@@ -42,4 +42,8 @@ textarea#BalloonNotes {
 
 .btn {
     margin-right: 0.5em;
+}
+
+.margin-top-1-5 {
+    margin-top: 1.5em;
 }
