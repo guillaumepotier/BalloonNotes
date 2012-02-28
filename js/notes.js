@@ -106,10 +106,10 @@ $(function() {
         initFetch: function() {
             var self = this;
             Notes.fetch({
-                'location': 'remote',
+                'location': 'local',
                 success: function() {
                     self.render();
-                    self.saveButton('saved');
+                    self.saveButton('save');
                 },
                 error: function() {
                     self.fallbackLocalFetch();
