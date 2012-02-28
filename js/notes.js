@@ -222,32 +222,5 @@ $(function() {
         }
     });
     
-    
-    /**
-     * Router
-     */
-    window.NotesRouter = Backbone.Router.extend({
-        initialize : function() {
-            window.App = new AppView();
-        },
-        routes : {
-            'load/:id' : 'load'
-        },
-        
-        /**
-         * Load a note history on click
-         * @param integer id
-         */
-        load : function(id) {
-            console.log(id);
-            return false;
-        }
-    });
-  
-});
-
-$(function() {
-    /** init router */
-    var router = new NotesRouter();
-    Backbone.history.start();
-});
+    window.App = new AppView();
+ });
