@@ -5,14 +5,23 @@
         <link href="css/notes.css" rel="stylesheet" />
     </head>
     <body>
-
+        <script type="text/template" id="history-template">
+            <h2>History</h2>
+            <ol>
+                <% _.each(history, function(note) { %>
+                <li><a href="#" data-id="<%= note.id %>">saved <%= note.date %> ago </a></li>
+                <% }); %>
+            </ol>
+        </script>
         <div class="container editor">
             <div id="BalloonNotesContainer" class="editorArea">
                 <textarea id="BalloonNotes" class="BalloonNotes"></textarea>
                 <span class="number-words" id="number_words"><b>0</b> words</span>
                 <a href="#" id="notes-save" class="btn btn-primary float-right">Save</a>
                 <a href="#" id="notes-clear" class="btn btn-danger float-right">Clear</a>
+                <div id="history-list" class="margin-top-1-5"></div>
             </div>
+            
         </div>
 
         <script type="text/javascript" src="jquery-1.7.1.min.js"></script>

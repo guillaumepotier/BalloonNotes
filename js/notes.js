@@ -18,6 +18,12 @@ $(function() {
             };
         }
     });
+    
+    /** History collection */
+    window.NotesHistoryCollection = Backbone.Collection.extend({
+        model : NotesModel,
+        url : 'server/history.php'
+    });
 
     /* We must set an id to store locally a single model. It is different than collections */
     var Notes = new NotesModel({id: 1});
@@ -26,12 +32,14 @@ $(function() {
     window.NotesView = Backbone.View.extend({
         // empty at the moment
     });
-
+    
     /* And then our "Controller" */
     window.AppView = Backbone.View.extend({
 
         /* Our main element */
         el: $("#BalloonNotesContainer"),
+        /** history list */
+        list: $('#history-list'),
 
         /* Autosave frequency in seconds */
         autosaveInterval: 20,
@@ -41,6 +49,7 @@ $(function() {
             "focus #BalloonNotes":    "hasFocus",
             "click #notes-clear":     "reset",
             "click #notes-save":      "autoSave",
+            "click #history-list a":  "loadHistory"
         },
 
         /**
@@ -48,35 +57,73 @@ $(function() {
         **/
         initialize: function() {
             var self = this;
+            this.setAutoSaveInterval(this);
 
+            /* Check for local and remote storage then render */
+            this.initFetch();
+            /** init underscore template for history list */
+            this.template = _.template($('#history-template').html());
+            /** Instanciate history collection */
+            this.history = new NotesHistoryCollection();
+            this.render();
+            //fetch and render history list
+            this.history.fetch({location: 'remote', success: function() {
+                self.renderList();
+            }});
+        },
+        
+        /**
+         * Load auto save interval
+         */
+        setAutoSaveInterval: function(self) {
             /* Fetch notes from localStorage, must give context& */
-            setInterval((function(self) {
+            if (undefined != this.interval) {
+                clearInterval(this.interval);
+            }
+            
+            this.interval = setInterval((function(self) {
                 return function() {
                     self.saveButton('saving');
                     self.autoSave();
                 }})(this),
             this.autosaveInterval*1000);
-
-            /* Check for local and remote storage then render */
-            this.initFetch();
+            
+            return this;
         },
+        
 
         /**
         *   Render notes and counter
         **/
         render: function() {
             /* Display notes */
-            this.$("#BalloonNotes").html(Notes.get("notes"));
+            this.$("#BalloonNotes").val(Notes.get("notes"));
 
             /* Scroll at the end of textarea */
             this.$("#BalloonNotes").scrollTop(this.$('#BalloonNotes')[0].scrollHeight);
             this.displayNumberWords(Notes.get("words"));
         },
+        
+        /**
+         * Render notes list
+         */
+        renderList : function(actual) {
+            actual = actual || false;
+            //Delete first element from array because it's generally the actual value of the textarea
+            if (false === actual) {
+                this.history.remove(_.first(this.history.models));
+            }
+            if (this.history.length > 0) {
+                var content = this.template({history : this.history.toJSON()});
+                this.list.html(content);
+            }
+            return this;
+        },
 
         /**
         *   Each keyup, we persist notes and count words
         **/
-        editAndSave: function(e) {
+        editAndSave: function() {
             var notes = this.$("#BalloonNotes").val();
             var words = this.countWordsAndDisplay(notes);
             Notes.save({notes: notes, words: words});
@@ -92,6 +139,10 @@ $(function() {
                 Notes.save({},{
                     'location' : 'remote',
                     success: function() {
+                        //fetch and render history list
+                        self.history.fetch({location: 'remote', success: function() {
+                            self.renderList();
+                        }});
                         self.saveButton('saved')
                     }
                 });
@@ -99,6 +150,31 @@ $(function() {
 
             return false;
         }, 800),
+        
+        /**
+         * Load data from one history model
+         *  and reload save interval
+         */
+        loadHistory: function(e) {
+            e.preventDefault();
+            var self = this,
+                id = $(e.target).attr('data-id'),
+                histo = this.history.get(id);
+            
+            //renew interval to avoid saving directly after loading history
+            this.setAutoSaveInterval(this);
+            
+            Notes.set({
+                notes: histo.get('notes'),
+                words: histo.get('words')
+            });
+            this.render();
+            
+            this.history.fetch({location: 'remote', success: function() {
+                self.renderList(true);
+            }});
+            
+        },
 
         /**
         *   On page loading, compare what we have in localStorage and in distant storage, then choose
@@ -190,8 +266,9 @@ $(function() {
             Notes.destroy();
             Notes = new NotesModel({id: 1});
             this.render();
+            this.list.empty();
         }
     });
-
+    
     window.App = new AppView();
-});
+ });
