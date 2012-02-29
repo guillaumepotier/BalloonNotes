@@ -19,7 +19,7 @@ $(function() {
         }
     });
     
-    /* Here is our history collection */
+    /** History collection */
     window.NotesHistoryCollection = Backbone.Collection.extend({
         model : NotesModel,
         url : 'server/history.php'
@@ -38,6 +38,7 @@ $(function() {
 
         /* Our main element */
         el: $("#BalloonNotesContainer"),
+        /** history list */
         list: $('#history-list'),
 
         /* Autosave frequency in seconds */
@@ -48,6 +49,7 @@ $(function() {
             "focus #BalloonNotes":    "hasFocus",
             "click #notes-clear":     "reset",
             "click #notes-save":      "autoSave",
+            "click #history-list a":  "loadHistory"
         },
 
         /**
@@ -55,15 +57,7 @@ $(function() {
         **/
         initialize: function() {
             var self = this;
-
-            /* Fetch notes from localStorage, must give context& */
-            setInterval((function(self) {
-                return function() {
-                    self.saveButton('saving');
-                    self.autoSave();
-                }})(this),
-            this.autosaveInterval*1000);
-            
+            this.setAutoSaveInterval(this);
 
             /* Check for local and remote storage then render */
             this.initFetch();
@@ -71,14 +65,35 @@ $(function() {
             this.template = _.template($('#history-template').html());
             /** Instanciate history collection */
             this.history = new NotesHistoryCollection();
+            this.render();
         },
+        
+        /**
+         * Load auto save interval
+         */
+        setAutoSaveInterval: function(self) {
+            /* Fetch notes from localStorage, must give context& */
+            if (undefined != this.interval) {
+                clearInterval(this.interval);
+            }
+            
+            this.interval = setInterval((function(self) {
+                return function() {
+                    self.saveButton('saving');
+                    self.autoSave();
+                }})(this),
+            this.autosaveInterval*1000);
+            
+            return this;
+        },
+        
 
         /**
         *   Render notes and counter
         **/
         render: function() {
             /* Display notes */
-            this.$("#BalloonNotes").html(Notes.get("notes"));
+            this.$("#BalloonNotes").val(Notes.get("notes"));
 
             /* Scroll at the end of textarea */
             this.$("#BalloonNotes").scrollTop(this.$('#BalloonNotes')[0].scrollHeight);
@@ -89,15 +104,17 @@ $(function() {
          * Render notes list
          */
         renderList : function() {
-            var renderedContent = this.template({history : this.history.toJSON()});
-            $(this.list).html(renderedContent);
+            if (this.history.length > 0) {
+                var content = this.template({history : this.history.toJSON()});
+                this.list.html(content);
+            }
             return this;
         },
 
         /**
         *   Each keyup, we persist notes and count words
         **/
-        editAndSave: function(e) {
+        editAndSave: function() {
             var notes = this.$("#BalloonNotes").val();
             var words = this.countWordsAndDisplay(notes);
             Notes.save({notes: notes, words: words});
@@ -124,6 +141,25 @@ $(function() {
 
             return false;
         }, 800),
+        
+        /**
+         * Load data from one history model
+         *  and reload save interval
+         */
+        loadHistory: function(e) {
+            e.preventDefault();
+            var id = $(e.target).attr('data-id'),
+                histo = this.history.get(id);
+            
+            //renew interval to avoid saving directly after loading history
+            this.setAutoSaveInterval(this);
+            
+            Notes.set({
+                notes: histo.get('notes'),
+                words: histo.get('words')
+            });
+            this.render();
+        },
 
         /**
         *   On page loading, compare what we have in localStorage and in distant storage, then choose
@@ -219,6 +255,7 @@ $(function() {
             Notes.destroy();
             Notes = new NotesModel({id: 1});
             this.render();
+            this.list.empty();
         }
     });
     

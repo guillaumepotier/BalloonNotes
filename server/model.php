@@ -29,8 +29,8 @@ function save()
     fwrite($handle, json_encode($values));
     fclose($handle);
     
-    $history = glob('*.*.json');
-    if (10 === count($history)) {
+    $history = glob($values['id'].'.*.json');
+    if (11 === count($history)) {
         reset($history);
         unlink(current($history));
     }
@@ -58,4 +58,8 @@ function destroy()
 {
     $jsonFile = $_GET['id'].".json";
     unlink($jsonFile);
+    $history = glob($_GET['id'].'.*.json');
+    foreach ($history as $h) {
+        unlink($h);
+    }
 }

@@ -6,10 +6,10 @@
     </head>
     <body>
         <script type="text/template" id="history-template">
-            <h2>Historique</h2>
+            <h2>History</h2>
             <ol>
                 <% _.each(history, function(note) { %>
-                <li><a href="#load/<%= note.id %>">version du <%= note.date %></a></li>
+                <li><a href="#" data-id="<%= note.id %>">saved <%= note.date %> ago </a></li>
                 <% }); %>
             </ol>
         </script>
@@ -23,11 +23,6 @@
             </div>
             
         </div>
-        
-
-        
-        
-        
 
         <script type="text/javascript" src="jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="underscore/underscore-min.js"></script>
