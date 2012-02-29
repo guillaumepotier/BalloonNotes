@@ -24,5 +24,4 @@ foreach($jsonFiles as $jsonFile) {
 }
 
 krsort($json_string);
-array_shift($json_string);
 echo "[". implode(',', $json_string) ."]";

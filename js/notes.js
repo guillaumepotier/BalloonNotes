@@ -103,7 +103,12 @@ $(function() {
         /**
          * Render notes list
          */
-        renderList : function() {
+        renderList : function(actual) {
+            actual = actual || false;
+            //Delete first element from array because it's generally the actual value of the textarea
+            if (false === actual) {
+                this.history.remove(_.first(this.history.models));
+            }
             if (this.history.length > 0) {
                 var content = this.template({history : this.history.toJSON()});
                 this.list.html(content);
@@ -148,7 +153,8 @@ $(function() {
          */
         loadHistory: function(e) {
             e.preventDefault();
-            var id = $(e.target).attr('data-id'),
+            var self = this,
+                id = $(e.target).attr('data-id'),
                 histo = this.history.get(id);
             
             //renew interval to avoid saving directly after loading history
@@ -159,6 +165,11 @@ $(function() {
                 words: histo.get('words')
             });
             this.render();
+            
+            this.history.fetch({location: 'remote', success: function() {
+                self.renderList(true);
+            }});
+            
         },
 
         /**
