@@ -66,6 +66,10 @@ $(function() {
             /** Instanciate history collection */
             this.history = new NotesHistoryCollection();
             this.render();
+            //fetch and render history list
+            this.history.fetch({location: 'remote', success: function() {
+                self.renderList();
+            }});
         },
         
         /**
@@ -181,10 +185,6 @@ $(function() {
                 'location': 'remote',
                 success: function() {
                     self.render();
-                    //fetch and render history list
-                    self.history.fetch({location: 'remote', success: function() {
-                        self.renderList();
-                    }});
                     self.saveButton('saved');
                 },
                 error: function() {
