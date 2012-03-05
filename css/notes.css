@@ -32,7 +32,8 @@ textarea#BalloonNotes {
 
 .number-words {
     font-size: 1.5em;
-    padding-bottom: 0.4em;
+    height:28px;
+    line-height:28px;
     margin-left: 0.5em;
 }
 
@@ -40,6 +41,17 @@ textarea#BalloonNotes {
     float: right;
 }
 
+.float-left {
+	float: left;
+}
+
 .btn {
     margin-right: 0.5em;
+}
+
+#update_time{
+	float:right;
+	margin-right:15px;
+	height:28px;
+	line-height:28px;
 }

@@ -52,11 +52,13 @@ $(function() {
             /* Fetch notes from localStorage, must give context& */
             setInterval((function(self) {
                 return function() {
-                    self.saveButton('saving');
-                    self.autoSave();
+                	if(!this.$("#notes-save").hasClass('disabled') && this.$("#BalloonNotes").val() != ''){
+                		self.saveButton('saving');
+                    	self.autoSave();
+                	}
                 }})(this),
             this.autosaveInterval*1000);
-
+			
             /* Check for local and remote storage then render */
             this.initFetch();
         },
@@ -65,9 +67,14 @@ $(function() {
         *   Render notes and counter
         **/
         render: function() {
+        
             /* Display notes */
-            this.$("#BalloonNotes").html(Notes.get("notes"));
-
+            if(Notes.get("notes")){
+            	this.$("#BalloonNotes").html(Notes.get("notes"));
+            }else{
+            	this.$("#BalloonNotes").html('');
+            }
+            
             /* Scroll at the end of textarea */
             this.$("#BalloonNotes").scrollTop(this.$('#BalloonNotes')[0].scrollHeight);
             this.displayNumberWords(Notes.get("words"));
@@ -79,7 +86,7 @@ $(function() {
         editAndSave: function(e) {
             var notes = this.$("#BalloonNotes").val();
             var words = this.countWordsAndDisplay(notes);
-            Notes.save({notes: notes, words: words});
+            Notes.save({notes: notes, words: words},{'location':'local'});
         },
 
         /**
@@ -87,14 +94,19 @@ $(function() {
         **/
         autoSave: _.debounce(function(self) {
             var self = this;
-
             if (Notes.get("words") !== 0) {
-                Notes.save({},{
+            	var date = new Date();
+            	time = date.getTime();
+                Notes.save({'lastSave':time},{
                     'location' : 'remote',
                     success: function() {
-                        self.saveButton('saved')
+                        self.saveButton('saved', time);
                     }
                 });
+                Notes.save({'lastSave':time},{
+                    'location' : 'local',
+                });
+                
             }
 
             return false;
@@ -160,27 +172,42 @@ $(function() {
         /**
         *   Take care of Save button UI
         **/
-        saveButton: function(state) {
+        saveButton: function(state, time) {
             var button = this.$("#notes-save");
             if (state == 'saved') {
                 button.addClass("disabled");
-                button.text('Saved');
+                var save = this.getTime(time);
+                button.text('SAVED | '+save);
             } else if ( state == 'saving') {
                 button.addClass("disabled");
                 button.text('Saving..');
             } else {
                 button.removeClass("disabled");
-                button.text('Save');
+                if(Notes.get('lastSave')){
+                	var save = this.getTime(Notes.get('lastSave'));
+                }else{
+                	var save = 'Not saved' 
+                }
+                button.text('SAVE | '+save);
             }
         },
-
+		
+		getTime: function(time){
+			var date = new Date(time),
+    		hours = date.getHours(),
+    		minutes = date.getMinutes(),
+    		seconds = date.getSeconds(),
+    		save = 'Last save : '+hours+':'+minutes+':'+seconds;
+    		return save;
+		},
+		
         /**
         *   Display number words below textarea
         **/
         displayNumberWords: function(number_words) {
             this.$("#number_words b").html(number_words);
         },
-
+        
         /**
         *   Delete LocalStorage and create/render new one
         **/
@@ -189,9 +216,11 @@ $(function() {
             Notes.destroy({'location': 'remote'});
             Notes.destroy();
             Notes = new NotesModel({id: 1});
+            this.$("#BalloonNotes").val("");
             this.render();
         }
     });
 
-    window.App = new AppView();
+    window.App = new AppView(); 
+    
 });
