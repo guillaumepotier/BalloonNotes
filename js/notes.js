@@ -41,6 +41,7 @@ $(function() {
             "focus #BalloonNotes":    "hasFocus",
             "click #notes-clear":     "reset",
             "click #notes-save":      "autoSave",
+            "click #send":     		  "sendMail",
         },
 
         /**
@@ -218,7 +219,22 @@ $(function() {
             Notes = new NotesModel({id: 1});
             this.$("#BalloonNotes").val("");
             this.render();
-        }
+        },
+        
+        sendMail: function(){
+        	/* Save before sending */
+        	this.autoSave();
+        	$.post('../server/mail.php', {notes : Notes.get('notes'), email : 'r.gazelot@gmail.com'}, function(data){
+        		if(data == 'success'){
+        			$('#send_success').fadeIn(500,function(){
+        				setInterval(function(){
+        					$('#send_success').fadeOut(500);
+        				},2000)
+        			});
+        		}
+        	});
+        },
+        
     });
 
     window.App = new AppView(); 
