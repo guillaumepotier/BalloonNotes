@@ -14,6 +14,10 @@ a {
   color: #4183C4;
 }
 
+#BalloonNotesContainer{
+	position:relative;
+}
+
 .editorArea {
     width: 80%;
     height: 80%;
@@ -32,7 +36,8 @@ textarea#BalloonNotes {
 
 .number-words {
     font-size: 1.5em;
-    padding-bottom: 0.4em;
+    height:28px;
+    line-height:28px;
     margin-left: 0.5em;
 }
 
@@ -40,6 +45,39 @@ textarea#BalloonNotes {
     float: right;
 }
 
+.float-left {
+	float: left;
+}
+
 .btn {
     margin-right: 0.5em;
+}
+
+#update_time{
+	float:right;
+	height:28px;
+	line-height:28px;
+	margin-right:15px;
+}
+
+#send_success{
+	background:#4da64d;
+	border:1px solid #248324;
+	color:#fff;
+	display:none;
+  	left:50%;
+	margin-left:-150px;
+	padding:4px 10px 4px 10px;
+	position:absolute;
+	text-align:center;
+	text-shadow: 0 -1px 1px #898989;
+	top:20px;
+	width:300px;
+
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+  	border-radius: 4px;
+	-webkit-border-radius: 4px;
+  	-moz-border-radius: 4px;
 }
