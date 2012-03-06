@@ -13,8 +13,9 @@ $(function() {
         /* Load some defaults */
         defaults: function() {
             return {
-                'notes': 'Type your notes here...',
-                'words': 0
+                'notes':        'Type your notes here...',
+                'words':        0,
+                'lastSave':     0
             };
         }
     });
@@ -41,7 +42,7 @@ $(function() {
             "focus #BalloonNotes":    "hasFocus",
             "click #notes-clear":     "reset",
             "click #notes-save":      "autoSave",
-            "click #send":     		  "sendMail",
+            "click #send":            "sendMail",
         },
 
         /**
@@ -50,16 +51,15 @@ $(function() {
         initialize: function() {
             var self = this;
 
-            /* Fetch notes from localStorage, must give context& */
+            /* Instanciate auto-save, must give context to setInterval func */
             setInterval((function(self) {
                 return function() {
-                	if(!this.$("#notes-save").hasClass('disabled') && this.$("#BalloonNotes").val() != ''){
-                		self.saveButton('saving');
-                    	self.autoSave();
-                	}
+                    if (!this.$("#notes-save").hasClass('disabled') && Notes.get("words") !== 0) {
+                        self.autoSave();
+                    }
                 }})(this),
             this.autosaveInterval*1000);
-			
+
             /* Check for local and remote storage then render */
             this.initFetch();
         },
@@ -68,16 +68,13 @@ $(function() {
         *   Render notes and counter
         **/
         render: function() {
-        
-            /* Display notes */
-            if(Notes.get("notes")){
-            	this.$("#BalloonNotes").html(Notes.get("notes"));
-            }else{
-            	this.$("#BalloonNotes").html('');
-            }
-            
+            /* Get local notes and display them */
+            this.$("#BalloonNotes").val(Notes.get("notes"));
+
             /* Scroll at the end of textarea */
             this.$("#BalloonNotes").scrollTop(this.$('#BalloonNotes')[0].scrollHeight);
+
+            /* Display the number of words below notes */
             this.displayNumberWords(Notes.get("words"));
         },
 
@@ -87,7 +84,7 @@ $(function() {
         editAndSave: function(e) {
             var notes = this.$("#BalloonNotes").val();
             var words = this.countWordsAndDisplay(notes);
-            Notes.save({notes: notes, words: words},{'location':'local'});
+            Notes.save({notes: notes, words: words});
         },
 
         /**
@@ -96,18 +93,15 @@ $(function() {
         autoSave: _.debounce(function(self) {
             var self = this;
             if (Notes.get("words") !== 0) {
-            	var date = new Date();
-            	time = date.getTime();
-                Notes.save({'lastSave':time},{
+                var date = new Date();
+                time = date.getTime();
+                Notes.save({"lastSave": time},{
                     'location' : 'remote',
                     success: function() {
                         self.saveButton('saved', time);
+                        Notes.save({"lastSave": time});
                     }
                 });
-                Notes.save({'lastSave':time},{
-                    'location' : 'local',
-                });
-                
             }
 
             return false;
@@ -123,22 +117,6 @@ $(function() {
                 success: function() {
                     self.render();
                     self.saveButton('save');
-                },
-                error: function() {
-                    self.fallbackLocalFetch();
-                }
-            });
-        },
-
-        /**
-        *   If could not resolve host on remote server, then fetch localStorage
-        **/
-        fallbackLocalFetch: function() {
-            var self = this;
-            Notes.fetch({
-                'location': 'local',
-                success: function() {
-                    self.render();
                 }
             });
         },
@@ -178,37 +156,33 @@ $(function() {
             if (state == 'saved') {
                 button.addClass("disabled");
                 var save = this.getTime(time);
-                button.text('SAVED | '+save);
+                button.text('Saved | '+save);
             } else if ( state == 'saving') {
                 button.addClass("disabled");
                 button.text('Saving..');
             } else {
                 button.removeClass("disabled");
-                if(Notes.get('lastSave')){
-                	var save = this.getTime(Notes.get('lastSave'));
-                }else{
-                	var save = 'Not saved' 
+                if (Notes.get('lastSave') != 0) {
+                    var save = this.getTime(Notes.get('lastSave'));
+                } else {
+                    var save = 'Not saved' 
                 }
-                button.text('SAVE | '+save);
+                button.text('Save | '+save);
             }
         },
-		
-		getTime: function(time){
-			var date = new Date(time),
-    		hours = date.getHours(),
-    		minutes = date.getMinutes(),
-    		seconds = date.getSeconds(),
-    		save = 'Last save : '+hours+':'+minutes+':'+seconds;
-    		return save;
-		},
-		
+
+        getTime: function(time){
+            var date = new Date(time);
+            return 'Last save : ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+        },
+
         /**
         *   Display number words below textarea
         **/
         displayNumberWords: function(number_words) {
             this.$("#number_words b").html(number_words);
         },
-        
+
         /**
         *   Delete LocalStorage and create/render new one
         **/
@@ -217,26 +191,15 @@ $(function() {
             Notes.destroy({'location': 'remote'});
             Notes.destroy();
             Notes = new NotesModel({id: 1});
-            this.$("#BalloonNotes").val("");
+            Notes.save();
             this.render();
         },
         
         sendMail: function(){
-        	/* Save before sending */
-        	this.autoSave();
-        	$.post('../server/mail.php', {notes : Notes.get('notes'), email : 'r.gazelot@gmail.com'}, function(data){
-        		if(data == 'success'){
-        			$('#send_success').fadeIn(500,function(){
-        				setInterval(function(){
-        					$('#send_success').fadeOut(500);
-        				},2000)
-        			});
-        		}
-        	});
+            /* To be properly done */
         },
         
     });
 
     window.App = new AppView(); 
-    
 });
