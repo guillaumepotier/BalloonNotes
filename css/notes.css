@@ -24,7 +24,7 @@ a {
     margin: 2em auto;
 }
 
-textarea#BalloonNotes {
+textarea.BalloonNotes {
     display: block;
     text-align: justify;
     width: 100%;
@@ -32,6 +32,43 @@ textarea#BalloonNotes {
     line-height: 1em;
     font-size: 3em;
     padding: 0.4em 0.5em;
+	-webkit-transition: height .3s linear;
+	-moz-transition: height .3s linear;
+	-ms-transition: height .3s linear;
+	-o-transition: height .3s linear;
+	transition: height .3s linear;
+}
+
+#history {
+	margin-top:10px;
+	display:none;
+	overflow:auto;
+}
+
+#BalloonHistory {
+	height:40%;
+	width:80%;
+}
+
+#history-list {
+	width:20%;
+}
+
+#history-list ul{
+	min-width:100%;
+	list-style:none;
+	text-align:left;
+	padding:0;
+	margin:0;
+}
+
+#history-list li{
+	min-width:100%;
+	height:4%;
+}
+
+#history-list a{
+	width:89%;
 }
 
 .number-words {
