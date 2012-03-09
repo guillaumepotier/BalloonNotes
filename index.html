@@ -6,15 +6,30 @@
         <link href="css/notes.css" rel="stylesheet" />
     </head>
     <body>
+		<script type="text/template" id="history-template">
+			<ul>
+				<% _.each(history, function(note) { %>				
+				<li><a href="#" data-id="<%= note.id %>" class="btn"><%= note.date %> ago</a></li>
+				<% }); %>
+			</ul>
+		</script>
 
         <div class="container editor">
             <div id="BalloonNotesContainer" class="editorArea">
                 <textarea id="BalloonNotes" class="BalloonNotes"></textarea>
+				<a id="browse-history" class="btn-info btn float-left">Browse history</a>
                 <a id="notes-clear" class="btn btn-danger float-left">Clear</a>
                 <span class="number-words" id="number_words"><b>0</b> words</span>
                 <a id="notes-save" class="btn btn-primary float-right">SAVE | Not saved</a>
                 <!-- <a href="#" id="send" class="btn btn-success float-right">Send me my notes</a> -->
                 <span id="send_success">Email envoyé à r.gazelot@gmail.com</span>
+				<div id="history">
+					<div id="history-list" class="float-left">
+					
+					</div>
+					<textarea id="BalloonHistory" class="BalloonNotes float-right"></textarea>
+					<a id="load-history" class="btn btn-primary float-right" style="clear:both;">Load this history</a>
+				</div>
             </div>
         </div>
 
