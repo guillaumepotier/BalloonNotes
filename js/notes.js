@@ -295,7 +295,7 @@ $(function() {
 		},
 		
 		/**
-		*
+		*	Function to show the history
 		**/
 		browseHistory: function(){
 			$('#BalloonNotes').animate({height:'50%'}, 300,function(){
@@ -305,7 +305,7 @@ $(function() {
 		},
 		
 		/**
-		*
+		* Function to hide the history
 		**/
 		hideHistory: function(){
 			$('#history').fadeOut(300,function(){
