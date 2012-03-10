@@ -56,7 +56,15 @@ function fetch()
 **/
 function destroy() 
 {
-    $jsonFile = $_GET['id'].".json";
+	$id = $_GET['id'];
+	// If it's a Notes
+	if($id === 1){
+		$jsonFile = $_GET['id'].".json";
+	}
+	// Else if it's an history
+	else {
+		$jsonFile = '1.'.$_GET['id'].".json";
+	}
     unlink($jsonFile);
     $history = glob($_GET['id'].'.*.json');
     foreach ($history as $h) {

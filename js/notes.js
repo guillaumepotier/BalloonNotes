@@ -109,10 +109,8 @@ $(function() {
          * Render notes list
          */
         renderList : function() {
-            if (this.history.length > 0) {
-                var content = this.template({history : this.history.toJSON()});
-                this.list.html(content);
-            }
+            var content = this.template({history : this.history.toJSON()});
+            this.list.html(content);
             return this;
         },
 
@@ -248,7 +246,8 @@ $(function() {
 			histo = this.history.get(id);
 
 			$('#BalloonHistory').text(histo.get('notes')).attr({
-				'data-words': histo.get('words'),
+				'data-words'	: histo.get('words'),
+				'data-id'		: histo.get('id')
 			});
 			$('#history-list a.btn-info').removeClass('btn-info');
 			$(e.target).addClass('btn-info');
@@ -260,6 +259,11 @@ $(function() {
 		backUpHistory: function(){
 			var notesFromHistory	= $('#BalloonHistory').text();
 			var wordsFromHistory	= $('#BalloonHistory').attr('data-words');
+			var idFromHistory		= $('#BalloonHistory').attr('data-id');
+			
+			// i to count into the array, and the array to store IDs of the history to delete
+			var i					= 0;
+			toDelete				= new Array();
 			
 			//renew interval to avoid saving directly after loading history
             this.setAutoSaveInterval(this);
@@ -268,6 +272,22 @@ $(function() {
 				notes	: notesFromHistory,
 				words	: wordsFromHistory
 			});
+			
+			// Delete history if it's more recent than the one we're loading
+			$('#history-list a').each(function(){
+				var id = $(this).attr('data-id');
+				
+				if( idFromHistory <= id ){
+					toDelete[i] = id;
+					i++;
+				}
+			});
+			
+			for(i = 0; i < toDelete.length; i++){
+				this.history.get(toDelete[i]).destroy({'location':'remote'});
+			}
+			
+			this.renderList();
 			this.render();
 			
 			this.hideHistory();
