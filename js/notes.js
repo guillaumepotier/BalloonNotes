@@ -272,6 +272,7 @@ $(function() {
 				notes	: notesFromHistory,
 				words	: wordsFromHistory
 			});
+			Notes.save();
 			
 			// Delete history if it's more recent than the one we're loading
 			$('#history-list a').each(function(){
