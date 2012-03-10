@@ -26,7 +26,7 @@ $(function() {
         url : 'server/history.php',
 		
 		initialize: function(){
-			console.log('NotesHistoryColllection Constructor');
+			console.log('NotesHistoryCollection Constructor');
 		}
     });
 	
@@ -53,6 +53,7 @@ $(function() {
         events: {
             "keyup":                  	"editAndSave",
             "focus #BalloonNotes":    	"hasFocus",
+			"blur #BalloonNotes":		"hasBlur",
             "click #notes-clear":     	"reset",
             "click #notes-save":      	"autoSave",
             "click #send":            	"sendMail",
@@ -142,7 +143,7 @@ $(function() {
                         Notes.save({"lastSave": time});
                     }
                 });
-            }			
+            }
             return false;
         }, 800),
 		
@@ -187,7 +188,16 @@ $(function() {
                 this.$("#BalloonNotes").val("");
             }
         },
-
+		
+		/**
+		*	When blur on textarea placeholder, if there is no text, replace by the placeholder "Type your notes here..."
+		**/
+		hasBlur: function(){
+				if(Notes.get("words") === 0){
+					this.$("#BalloonNotes").val("Type your notes here...");
+				}
+		},
+		
         /**
         *   Count number of words in notes
         **/
