@@ -15,7 +15,7 @@ a {
 }
 
 #BalloonNotesContainer{
-	position:relative;
+    position:relative;
 }
 
 .editorArea {
@@ -32,43 +32,43 @@ textarea.BalloonNotes {
     line-height: 1em;
     font-size: 3em;
     padding: 0.4em 0.5em;
-	-webkit-transition: height .3s linear;
-	-moz-transition: height .3s linear;
-	-ms-transition: height .3s linear;
-	-o-transition: height .3s linear;
-	transition: height .3s linear;
+    -webkit-transition: height .3s linear;
+    -moz-transition: height .3s linear;
+    -ms-transition: height .3s linear;
+    -o-transition: height .3s linear;
+    transition: height .3s linear;
 }
 
 #history {
-	margin-top:10px;
-	display:none;
-	overflow:auto;
+    margin-top:10px;
+    display:none;
+    overflow:auto;
 }
 
 #BalloonHistory {
-	height:40%;
-	width:80%;
+    height:40%;
+    width:80%;
 }
 
 #history-list {
-	width:20%;
+    width:20%;
 }
 
 #history-list ul{
-	min-width:100%;
-	list-style:none;
-	text-align:left;
-	padding:0;
-	margin:0;
+    min-width:100%;
+    list-style:none;
+    text-align:left;
+    padding:0;
+    margin:0;
 }
 
 #history-list li{
-	min-width:100%;
-	height:4%;
+    min-width:100%;
+    height:4%;
 }
 
 #history-list a{
-	width:89%;
+    width:89%;
 }
 
 .number-words {
@@ -83,7 +83,7 @@ textarea.BalloonNotes {
 }
 
 .float-left {
-	float: left;
+    float: left;
 }
 
 .btn {
@@ -91,30 +91,30 @@ textarea.BalloonNotes {
 }
 
 #update_time{
-	float:right;
-	height:28px;
-	line-height:28px;
-	margin-right:15px;
+    float:right;
+    height:28px;
+    line-height:28px;
+    margin-right:15px;
 }
 
 #send_success{
-	background:#4da64d;
-	border:1px solid #248324;
-	color:#fff;
-	display:none;
-  	left:50%;
-	margin-left:-150px;
-	padding:4px 10px 4px 10px;
-	position:absolute;
-	text-align:center;
-	text-shadow: 0 -1px 1px #898989;
-	top:20px;
-	width:300px;
+    background:#4da64d;
+    border:1px solid #248324;
+    color:#fff;
+    display:none;
+      left:50%;
+    margin-left:-150px;
+    padding:4px 10px 4px 10px;
+    position:absolute;
+    text-align:center;
+    text-shadow: 0 -1px 1px #898989;
+    top:20px;
+    width:300px;
 
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-  	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-  	border-radius: 4px;
-	-webkit-border-radius: 4px;
-  	-moz-border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+      -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+    -webkit-border-radius: 4px;
+      -moz-border-radius: 4px;
 }
