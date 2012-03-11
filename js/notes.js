@@ -284,7 +284,9 @@ $(function() {
 				}
 			});
 			
-			for(i = 0; i < toDelete.length; i++){
+			var length = toDelete.length;
+			
+			for(i = 0; i < length; i++){
 				this.history.get(toDelete[i]).destroy({'location':'remote'});
 			}
 			
