@@ -177,12 +177,33 @@ $(function() {
     *   On page loading, compare what we have in localStorage and in distant storage, then choose
     **/
     initFetch: function() {
-      var self = this;
-      Notes.fetch({
-        'location': 'local',
-        success: function() {
-          self.render();
-          self.saveButton('save');
+      var select = function ( model ) {
+        Notes = model;
+        this.render( );
+        this.saveButton( 'save' );
+      }.bind( this );
+	  
+      var local = new NotesModel({id: 1});
+      
+      local.fetch({
+        location: 'local'
+      });
+      
+      var remote = new NotesModel({id: 1});
+      
+      remote.fetch({
+        location: 'remote',
+        success: function( ) {
+	        //todo Ugly, should be better with a modal box
+            if ( local.get( 'notes' ) === remote.get( 'notes' ) )
+              select( local );
+            else if ( local.get( 'lastSave' ) > remote.get( 'lastSave' ) )
+              select( local );
+            else if ( local.get( 'lastSave' ) < remote.get( 'lastSave' ) )
+              select( confirm( 'Remote notes seems to be younger than local ones. Press cancel to keep your version.' ) ? remote : local );
+        },
+	    error: function ( ) {
+		    select( local );
         }
       });
     },
